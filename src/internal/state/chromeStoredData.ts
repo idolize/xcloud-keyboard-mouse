@@ -62,8 +62,11 @@ export function storeActiveGamepadConfig(name: string) {
 }
 
 function normalizeGamepadConfigs(data: Record<string, any> = {}): AllMyGamepadConfigs {
-  const isEnabled: boolean = data[SyncStorageKeys.ACTIVE_GAMEPAD_CONFIG] || true;
   const activeConfig: string = data[SyncStorageKeys.ACTIVE_GAMEPAD_CONFIG] || DEFAULT_CONFIG_NAME;
+  const isEnabled: boolean =
+    data[SyncStorageKeys.ENABLED] === undefined
+      ? !!data[SyncStorageKeys.ACTIVE_GAMEPAD_CONFIG]
+      : data[SyncStorageKeys.ENABLED];
   const keys = Object.keys(data).filter((key) => key.startsWith(SyncStorageKeys.GAMEPAD_CONFIGS));
   const initialConfigsMap: AllMyGamepadConfigs['configs'] = {
     [DEFAULT_CONFIG_NAME]: defaultGamepadConfig,

@@ -1,6 +1,5 @@
 import { getAllStoredSync, storeActiveGamepadConfig, updateGameName } from './internal/state/chromeStoredData';
 import { disableActionButton, enableActionButton } from './internal/utils/actionButtonUtils';
-import { getActiveTab } from './internal/utils/tabsUtils';
 import { DEFAULT_CONFIG_NAME } from './shared/gamepadConfig';
 import { MessageTypes, activateGamepadConfigMsg, Message } from './shared/messages';
 
@@ -49,14 +48,4 @@ chrome.runtime.onMessage.addListener((msg: Message, sender, sendResponse) => {
     return false;
   }
   return false;
-});
-
-// Listen for any internal messages (e.g. from popup) and proxy to the content_script.
-chrome.runtime.onConnect.addListener((port) => {
-  port.onMessage.addListener(async (msg: Message) => {
-    const tab = await getActiveTab();
-    if (tab) {
-      chrome.tabs.sendMessage(tab.id!, msg);
-    }
-  });
 });
