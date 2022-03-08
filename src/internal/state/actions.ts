@@ -10,6 +10,7 @@ import {
   getLocalGameStatus,
   storeActiveGamepadConfig,
   storeGamepadConfig,
+  storeGamepadConfigEnabled,
 } from './chromeStoredData';
 
 let port: chrome.runtime.Port | undefined;
@@ -39,7 +40,7 @@ export const activateGamepadConfigAction = createAsyncThunk(
 
 export const disableGamepadConfigAction = createAsyncThunk('config/disable', async () => {
   sendMessage(disableGamepadMsg());
-  await storeActiveGamepadConfig(null);
+  await storeGamepadConfigEnabled(false);
 });
 
 export const deleteGamepadConfigAction = createAsyncThunk(

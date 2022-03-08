@@ -1,4 +1,4 @@
-import { injectedMsg, Message } from './shared/messages';
+import { injectedMsg, Message, MessageTypes } from './shared/messages';
 import { injectCssFile, injectImagePaths, injectInitialScriptFile } from './shared/pageInjectUtils';
 
 /*
@@ -34,10 +34,16 @@ window.addEventListener('message', (event) => {
 
   // https://stackoverflow.com/a/69603416/2359478
   if (chrome.runtime?.id) {
-    // Proxy to the extension
-    chrome.runtime.sendMessage(msg, (response) => {
-      handleMessageFromExt(response);
-    });
+    // Proxy to the extension background script.
+    // (only INITIALIZED message needs a response, so we avoid passing the callback
+    // otherwise - see https://stackoverflow.com/a/59915897)
+    if (msg.type === MessageTypes.INITIALIZED) {
+      chrome.runtime.sendMessage(msg, (response) => {
+        handleMessageFromExt(response);
+      });
+    } else {
+      chrome.runtime.sendMessage(msg);
+    }
   }
 });
 
@@ -46,4 +52,5 @@ chrome.runtime.onMessage.addListener((msg, sender, _sendResponse) => {
   if (!sender.tab) {
     handleMessageFromExt(msg);
   }
+  return Promise.resolve('Dummy response to keep the console quiet');
 });
